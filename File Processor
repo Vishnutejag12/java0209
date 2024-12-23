@@ -1,0 +1,67 @@
+import java.io.*;
+import java.util.ArrayList;
+
+class FileProcessor {
+    private String inputFilePath;
+    private String outputFilePath;
+
+    public FileProcessor(String inputFilePath, String outputFilePath) {
+        this.inputFilePath = inputFilePath;
+        this.outputFilePath = outputFilePath;
+    }
+
+    public ArrayList<String> readFile() throws IOException {
+        ArrayList<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+        return lines;
+    }
+
+    public ArrayList<String> processLines(ArrayList<String> lines) {
+        ArrayList<String> processedLines = new ArrayList<>();
+        for (String line : lines) {
+            processedLines.add(line.toUpperCase());
+        }
+        return processedLines;
+    }
+
+    public void writeFile(ArrayList<String> lines) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
+
+    public void processFile() {
+        try {
+            System.out.println("Reading file...");
+            ArrayList<String> lines = readFile();
+
+            System.out.println("Processing lines...");
+            ArrayList<String> processedLines = processLines(lines);
+
+            System.out.println("Writing to output file...");
+            writeFile(processedLines);
+
+            System.out.println("File processing complete!");
+        } catch (IOException e) {
+            System.err.println("An error occurred: " + e.getMessage());
+        }
+    }
+}
+
+public class FileHandlingExample {
+    public static void main(String[] args) {
+        String inputFile = "input.txt"; // Ensure this file exists
+        String outputFile = "output.txt";
+
+        FileProcessor processor = new FileProcessor(inputFile, outputFile);
+        processor.processFile();
+    }
+}
