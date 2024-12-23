@@ -1,0 +1,217 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+// Class representing a Book
+class Book {
+    private String title;
+    private String author;
+    private String ISBN;
+    private boolean isAvailable;
+
+    public Book(String title, String author, String ISBN) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = ISBN;
+        this.isAvailable = true;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "Title='" + title + '\'' +
+                ", Author='" + author + '\'' +
+                ", ISBN='" + ISBN + '\'' +
+                ", Available=" + isAvailable +
+                '}';
+    }
+}
+
+// Class representing a Library
+class Library {
+    private ArrayList<Book> books;
+
+    public Library() {
+        books = new ArrayList<>();
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public void viewBooks() {
+        if (books.isEmpty()) {
+            System.out.println("No books available in the library.");
+            return;
+        }
+        for (Book book : books) {
+            System.out.println(book);
+        }
+    }
+
+    public Book searchBookByTitle(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public Book searchBookByISBN(String ISBN) {
+        for (Book book : books) {
+            if (book.getISBN().equals(ISBN)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public boolean borrowBook(String ISBN) {
+        Book book = searchBookByISBN(ISBN);
+        if (book != null && book.isAvailable()) {
+            book.setAvailable(false);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean returnBook(String ISBN) {
+        Book book = searchBookByISBN(ISBN);
+        if (book != null && !book.isAvailable()) {
+            book.setAvailable(true);
+            return true;
+        }
+        return false;
+    }
+}
+
+// Main class for the Library Management System
+public class LibraryManagementSystem {
+    private static Library library = new Library();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nLibrary Management System");
+            System.out.println("1. Add Book");
+            System.out.println("2. View Books");
+            System.out.println("3. Search Book by Title");
+            System.out.println("4. Search Book by ISBN");
+            System.out.println("5. Borrow Book");
+            System.out.println("6. Return Book");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
+
+            switch (choice) {
+                case 1:
+                    addBook();
+                    break;
+                case 2:
+                    library.viewBooks();
+                    break;
+                case 3:
+                    searchBookByTitle();
+                    break;
+                case 4:
+                    searchBookByISBN();
+                    break;
+                case 5:
+                    borrowBook();
+                    break;
+                case 6:
+                    returnBook();
+                    break;
+                case 7:
+                    System.out.println("Exiting... Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void addBook() {
+        System.out.print("Enter book title: ");
+        String title = scanner.nextLine();
+
+        System.out.print("Enter book author: ");
+        String author = scanner.nextLine();
+
+        System.out.print("Enter book ISBN: ");
+        String ISBN = scanner.nextLine();
+
+        Book newBook = new Book(title, author, ISBN);
+        library.addBook(newBook);
+
+        System.out.println("Book added successfully!");
+    }
+
+    private static void searchBookByTitle() {
+        System.out.print("Enter book title to search: ");
+        String title = scanner.nextLine();
+
+        Book book = library.searchBookByTitle(title);
+        if (book != null) {
+            System.out.println("Book found: " + book);
+        } else {
+            System.out.println("Book not found.");
+        }
+    }
+
+    private static void searchBookByISBN() {
+        System.out.print("Enter book ISBN to search: ");
+        String ISBN = scanner.nextLine();
+
+        Book book = library.searchBookByISBN(ISBN);
+        if (book != null) {
+            System.out.println("Book found: " + book);
+        } else {
+            System.out.println("Book not found.");
+        }
+    }
+
+    private static void borrowBook() {
+        System.out.print("Enter book ISBN to borrow: ");
+        String ISBN = scanner.nextLine();
+
+        if (library.borrowBook(ISBN)) {
+            System.out.println("Book borrowed successfully.");
+        } else {
+            System.out.println("Book is not available or does not exist.");
+        }
+    }
+
+    private static void returnBook() {
+        System.out.print("Enter book ISBN to return: ");
+        String ISBN = scanner.nextLine();
+
+        if (library.returnBook(ISBN)) {
+            System.out.println("Book returned successfully.");
+        } else {
+            System.out.println("Book is not borrowed or does not exist.");
+        }
+    }
+}
